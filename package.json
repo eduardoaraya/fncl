@@ -8,6 +8,7 @@
     "dev": "npx nodemon ./index.js"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "pg": "^8.6.0"
   },
   "devDependencies": {

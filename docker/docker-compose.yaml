@@ -1,0 +1,11 @@
+version: "3.5"
+services: 
+    db:
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_PASSWORD: root
+            POSTGRES_USER: postgres
+            POSTGRES_DB: financial
+        ports: 
+            - 5432:5432
