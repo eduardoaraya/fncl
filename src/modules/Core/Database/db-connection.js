@@ -1,5 +1,5 @@
 import Pg from 'pg';
-import config from '../../../config.js';
+import config from '../../../../config.js';
 
 const client = new Pg.Client({
   user: config.database.postgres.user,
@@ -7,9 +7,9 @@ const client = new Pg.Client({
   password: config.database.postgres.password,
 })
 
-client.on("notice", console.log);
+// client.on("notice", console.log);
 client.on('error', console.error);
-client.on("end", console.log);
+// client.on("end", console.log);
 
 client.connect();
 
