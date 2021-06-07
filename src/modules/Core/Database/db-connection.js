@@ -13,6 +13,3 @@ client.connect();
 export default {
   getConnection: () => client,
 }
-
-// client.on('error', console.error);
-// client.on("end", console.log);

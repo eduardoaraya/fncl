@@ -4,10 +4,13 @@ import Config from "../../config.js";
 import CategoryRepository, { generateTag, generateName } from '../modules/Category/repository.js';
 import ExpenseRepository from '../modules/Expense/repository.js';
 import ImportRepository from '../modules/Core/Import/repository.js';
+import debug from 'debug';
+
+const log = debug('app:import');
 
 (async function () {
+  log("> Import init");
   const excludeFiles = await ImportRepository.find('file').execute();
-  console.log(excludeFiles);
   const importedData = await importCsvData({
     importPath: path.resolve(Config.basePath, 'var', 'import'),
     excludes: excludeFiles.rows.map(({ file }) => file)
@@ -26,7 +29,10 @@ import ImportRepository from '../modules/Core/Import/repository.js';
       'created_at',
       'updated_at'
     ], `'${content.fileName}', '${created_at}', '${updated_at}'`).execute();
+
+    log("> Importe successful!: %o", content.fileName);
   }
+  log("> Total import:", Object.keys(importedData).length);
 })();
 
 function* generate(data) {
