@@ -38,7 +38,13 @@ export default function (table) {
   }
 
   return {
+    table,
     insert,
-    find
+    find,
+    queryRow: (query) =>
+    ({
+      toString: () => query,
+      execute: () => connection.query(query)
+    })
   }
 }

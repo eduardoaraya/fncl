@@ -8,6 +8,9 @@ dotenv.config({
 
 export default {
   basePath: dirname,
+  server: {
+    port: parseInt(process.env.EXPRESS_PORT)
+  },
   database: {
     postgres: {
       user: process.env.DB_USER,
