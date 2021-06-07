@@ -1,17 +1,5 @@
 import Model from './model.js';
-
 const CategoryModel = Model();
-
-export const generateTag = (name) => {
-  return name.toLowerCase().replace(/[ ]+/i, "_");
-}
-
-export const generateName = (name) => {
-  return name === "" || typeof name === 'undefined'
-    ? "Not defined"
-    : name;
-}
-
 export default {
   list: (condition = null) => {
     return CategoryModel.find('*', condition);

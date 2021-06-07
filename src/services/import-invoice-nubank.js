@@ -3,19 +3,43 @@ import path from "path";
 import Config from "../../config.js";
 import CategoryRepository, { generateTag, generateName } from '../modules/Category/repository.js';
 import ExpenseRepository from '../modules/Expense/repository.js';
+import ImportRepository from '../modules/Core/Import/repository.js';
 
-let data = await importCsvData({
-  importPath: path.resolve(Config.basePath, 'var', 'import')
-});
+(async function () {
+  const excludeFiles = await ImportRepository.find('file').execute();
+  console.log(excludeFiles);
+  const importedData = await importCsvData({
+    importPath: path.resolve(Config.basePath, 'var', 'import'),
+    excludes: excludeFiles.rows.map(({ file }) => file)
+  });
+  for (const content of generate(importedData)) {
+    const data = await factory((await content.data));
+    parseAmountToInt(data);
+    await generateCategories(data);
+    await generateExpenses(data);
+    const {
+      created_at,
+      updated_at
+    } = getTimestamp();
+    await ImportRepository.save([
+      'file',
+      'created_at',
+      'updated_at'
+    ], `'${content.fileName}', '${created_at}', '${updated_at}'`).execute();
+  }
+})();
 
-data = await Promise.all(data);
-data = data.map(factory);
-data.forEach(parseAmountToInt);
-data.forEach(generateCategories);
-const insertList = data.map(generateExpenses);
-Promise.all(insertList)
-  .then(console.log)
-  .catch(console.log)
+function* generate(data) {
+  let fileNames = Object.keys(data);
+  while (fileNames.length > 0) {
+    const fileName = fileNames.shift();
+    yield {
+      fileName: fileName,
+      data: data[fileName]
+    };
+  }
+}
+
 
 async function generateExpenses(data) {
   const rows = await Promise.all(data.map(async row => {
@@ -35,7 +59,7 @@ async function generateExpenses(data) {
       `'${date.updated_at}'`,
     ])
   }));
-  return ExpenseRepository.save([
+  await ExpenseRepository.save([
     'category_id',
     'value',
     'title',
@@ -53,30 +77,37 @@ function getTimestamp() {
     updated_at: date,
   }
 }
-async function generateCategories() {
-  const queue = data.map(async current => {
-    let dataCategory = await current.reduce(async (reducer, row) => {
-      let categoryName = row.category;
-      let date = getTimestamp();
-      categoryName = generateName(categoryName);
-      const tag = generateTag(categoryName);
-      const {
-        rowCount
-      } = await CategoryRepository.find('id', `tag = '${tag}'`).execute();
-      if (rowCount !== 0) return reducer;
-      reducer[tag] = [`'${categoryName}'`, `'${tag}'`, `'${date.created_at}'`, `'${date.updated_at}'`];
-      return reducer;
+
+async function generateCategories(data) {
+  const dataCategory = [];
+  const categories = data
+    .map(item => item.category)
+    .reduce((acc, current) => {
+      const name = generateName(current);
+      const tag = generateTag(name);
+      acc[tag] = {
+        tag,
+        name
+      };
+      return acc;
     }, {});
-    dataCategory = Object.values(dataCategory);
-    console.log(dataCategory);
-    return dataCategory.length && CategoryRepository.save([
+  for (const { tag, name } of Object.values(categories)) {
+    const {
+      rowCount
+    } = await CategoryRepository.find('id', `tag = '${tag}'`).execute(),
+      date = getTimestamp();
+    if (!rowCount) {
+      dataCategory.push([`'${name}'`, `'${tag}'`, `'${date.created_at}'`, `'${date.updated_at}'`]);
+    }
+  }
+  if (dataCategory.length) {
+    await CategoryRepository.save([
       'name',
       'tag',
       'created_at',
       'updated_at'
     ], dataCategory).execute();
-  });
-  return Promise.all(queue);
+  }
 }
 
 function factory(data) {

@@ -16,6 +16,12 @@ const createTableQueryList = [
     date DATE NOT NULL,
     created_at DATE NOT NULL,
     updated_at DATE NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS import (
+    id SERIAL PRIMARY KEY,
+    file VARCHAR (45),
+    created_at DATE NOT NULL,
+    updated_at DATE NOT NULL
   )`
 ];
 
