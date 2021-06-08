@@ -22,7 +22,11 @@ async function prepareQueueCsvFiles({ basePath, files }) {
   return files.map(async file => {
     const filePath = path.resolve(basePath, file);
     return {
-      getData: async () => (await fsPromise.readFile(filePath)).toString().split('\n').map(item => item.split(',')),
+      getData: async () => (await fsPromise.readFile(filePath)).toString()
+        .split(/\n/)
+        .map(item => item.split(/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/))
+        .filter(row => row.length !== 0)
+      ,
       fileName: file
     }
   });

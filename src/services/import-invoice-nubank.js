@@ -12,7 +12,7 @@ const log = debug('app:import');
   log("> Import init");
   const excludeFiles = await ImportRepository.find('file').execute();
   const importedData = await importCsvData({
-    importPath: path.resolve(Config.basePath, 'var', 'import'),
+    importPath: path.resolve(Config.basePath, 'var', 'import', 'nubank_invoice'),
     excludes: excludeFiles.rows.map(({ file }) => file)
   });
   for (const content of generate(importedData)) {

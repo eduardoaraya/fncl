@@ -5,7 +5,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "DEBUG='app:*' npx nodemon ./index.js"
+    "dev": "DEBUG='app:*' npx nodemon ./index.js",
+    "run:import:nubank": "DEBUG='app:*' node ./src/services/import-invoice-nubank.js",
+    "run:import:nfe": "DEBUG='app:*' node ./src/services/import-invoice-nfe.js"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
