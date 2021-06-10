@@ -1,6 +1,6 @@
 import importCsvData from "../modules/Core/Import/import-csv-data.js";
 import path from "path";
-import Config from "../../config.js";
+import Config from "../config.ts/index.js.js";
 import CategoryRepository, { generateTag, generateName } from '../modules/Category/repository.js';
 import ExpenseRepository from '../modules/Expense/repository.js';
 import ImportRepository from '../modules/Core/Import/repository.js';

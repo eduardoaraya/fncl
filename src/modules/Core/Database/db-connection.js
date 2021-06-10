@@ -1,5 +1,5 @@
 import Pg from 'pg';
-import config from '../../../../config.js';
+import config from '../../../config.ts';
 
 
 const client = new Pg.Client({

@@ -22,10 +22,20 @@ const createTableQueryList = [
     file VARCHAR (45),
     created_at DATE NOT NULL,
     updated_at DATE NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS profit (
+    id SERIAL PRIMARY KEY,
+    value INT NOT NULL,
+    payment_by VARCHAR(244) NOT NULL,
+    date DATE NOT NULL,
+    created_at DATE NOT NULL,
+    updated_at DATE NOT NULL
   )`
 ];
 
-export default () => {
+const migrate = () => {
   return createTableQueryList
     .map(query => database.getConnection().query(query));
 }
+
+export default migrate();

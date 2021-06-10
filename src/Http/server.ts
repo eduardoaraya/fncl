@@ -1,7 +1,7 @@
 import express from 'express';
 import debug from 'debug';
-import Config from '../../config.js';
-import router from './router.js';
+import Config from '../config';
+import router from './router';
 
 const log = debug('app:http:server');
 const PORT = Config.server.port;

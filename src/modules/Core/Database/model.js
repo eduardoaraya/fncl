@@ -7,7 +7,7 @@ export default function (table) {
 
     values = typeof values === 'string'
       ? `(${values})`
-      : values.map(item => `(${item.join(', ')})`).join(',');
+      : values.map(item => `(${item.map(item => `'${item}'`).join(', ')})`).join(',');
 
     fields = typeof fields === 'string'
       ? fields

@@ -1,0 +1,19 @@
+{
+    "verbose": true,
+    "ext": "ts,js",
+    "restartable": "rs",
+    "watch": [
+        "src"
+    ],
+    "ignore": [
+        "build/*",
+        "src/**/*.spec.ts"
+    ],
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "execMap": {
+        "ts": "ts-node"
+    },
+    "exec": "DEBUG='app:*' yarn ts-node src/index.ts"
+}

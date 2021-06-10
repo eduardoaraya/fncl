@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "dev": "DEBUG='app:*' npx nodemon ./index.js",
+    "ts:watch": "tsc -w",
+    "dev": "nodemon --config",
     "run:import:nubank": "DEBUG='app:*' node ./src/services/import-invoice-nubank.js",
     "run:import:nfe": "DEBUG='app:*' node ./src/services/import-invoice-nfe.js"
   },
@@ -15,7 +15,11 @@
     "pg": "^8.6.0"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.12",
     "debug": "^4.3.1",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
   }
 }

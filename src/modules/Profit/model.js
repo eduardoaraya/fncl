@@ -1,0 +1,2 @@
+import Model from '../Core/Database/model.js';
+export default () => Model('profit');
