@@ -2,36 +2,39 @@ import path from "path";
 import importCsvData from "../modules/Core/Import/import-csv-data.js";
 import ImportRepository from '../modules/Core/Import/repository.js';
 import ProfitRepository from '../modules/Profit/repository.js';
-import Config from "../config.ts/index.js.js";
+import Config from "../config.ts";
 import debug from 'debug';
 
 const log = debug('app:import:nfe');
 
-log("> Import init");
-const excludeFiles = await ImportRepository.find('file').execute();
-console.log(excludeFiles);
-const importedData = await importCsvData({
-  importPath: path.resolve(Config.basePath, 'var', 'import', 'nfe_invoice'),
-  excludes: excludeFiles.rows.map(({ file }) => file)
-});
+(async function () {
 
-for (const content of generate(importedData)) {
-  const data = factory((await content.data));
-  parseAmountToInt(data);
-  const {
-    created_at,
-    updated_at
-  } = getTimestamp();
-  const query = ProfitRepository
-    .save([
-      'date',
-      'payment_by',
-      'value',
-      'created_at',
-      'updated_at'
-    ], data.map((value) => [...Object.values(value), created_at, updated_at]));
-  await query.execute();
-}
+  log("> Import init");
+  const excludeFiles = await ImportRepository.find('file').execute();
+  const importedData = await importCsvData({
+    importPath: path.resolve(Config.basePath, 'var', 'import', 'nfe_invoice'),
+    excludes: excludeFiles.rows.map(({ file }) => file)
+  });
+  for (const content of generate(importedData)) {
+    const data = factory((await content.data));
+    parseAmountToInt(data);
+    const {
+      created_at,
+      updated_at
+    } = getTimestamp();
+    const query = ProfitRepository
+      .save([
+        'date',
+        'payment_by',
+        'value',
+        'created_at',
+        'updated_at'
+      ], data.map((value) => [...Object.values(value), created_at, updated_at]));
+    await query.execute();
+    log("> Importe successful!: %o", content.fileName);
+  }
+  log("> Total import:", Object.keys(importedData).length);
+})()
 
 function* generate(data) {
   let fileNames = Object.keys(data);

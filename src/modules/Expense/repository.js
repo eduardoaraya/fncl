@@ -20,5 +20,22 @@ export default {
         INNER JOIN ${CategoryModel.table} as cat 
         ON cat.id = main_table.category_id
     `);
+  },
+  getByCategories: function () {
+    return ExpenseModel.queryRow(`
+      SELECT 
+        main_table.*,
+        (
+          SELECT SUM(value)
+            FROM ${ExpenseModel.table} as expense
+            WHERE expense.category_id = main_table.id
+        ) as total
+      FROM ${CategoryModel.table} as main_table 
+      GROUP BY main_table.id
+    `);
+  },
+  getTotal: function () {
+    return ExpenseModel.queryRow(`
+      SELECT sum(value) as total FROM ${ExpenseModel.table} WHERE value > 0`);
   }
 }

@@ -1,6 +1,6 @@
 import importCsvData from "../modules/Core/Import/import-csv-data.js";
 import path from "path";
-import Config from "../config.ts/index.js.js";
+import Config from "../config.ts";
 import CategoryRepository, { generateTag, generateName } from '../modules/Category/repository.js';
 import ExpenseRepository from '../modules/Expense/repository.js';
 import ImportRepository from '../modules/Core/Import/repository.js';
@@ -57,12 +57,12 @@ async function generateExpenses(data) {
     } = await CategoryRepository.find('id', `tag = '${tag}'`).execute();
     row.category = rowCount !== 0 ? rows[0].id : new Error("Invalid category by tag:" + tag);
     return Promise.resolve([
-      `'${row.category}'`,
-      `'${row.amount}'`,
-      `'${row.title}'`,
-      `'${row.date}'`,
-      `'${date.created_at}'`,
-      `'${date.updated_at}'`,
+      row.category,
+      row.amount,
+      row.title,
+      row.date,
+      date.created_at,
+      date.updated_at,
     ])
   }));
   await ExpenseRepository.save([
